@@ -20,29 +20,27 @@ public class CityUserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CityUser>> getAllUsers() {
-        List<CityUser> users = cityUserService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUserId(#id)")
-    public ResponseEntity<CityUser> getUserById(@PathVariable Long id) {
-        return cityUserService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(cityUserService.getAllUsers());
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CityUser> addUser(@Valid @RequestBody CityUser cityUser) {
-        CityUser created = cityUserService.addUser(cityUser);
-        return ResponseEntity.ok(created);
+        return ResponseEntity.ok(cityUserService.addUser(cityUser));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isCurrentUserId(#id)")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CityUser> updateUser(@PathVariable Long id, @Valid @RequestBody CityUser cityUser) {
         return cityUserService.updateUser(id, cityUser)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CityUser> getUserById(@PathVariable Long id) {
+        return cityUserService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -50,7 +48,13 @@ public class CityUserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (cityUserService.getUserById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         cityUserService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }
+

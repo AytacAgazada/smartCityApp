@@ -1,6 +1,5 @@
 package com.example.smartcityapp.service;
 
-import com.example.smartcityapp.model.entity.CityUser;
 import com.example.smartcityapp.repository.CityUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -14,7 +14,9 @@ java {
 }
 
 ext {
-    springCloudVersion = "2025.0.0"
+    // Corrected Spring Cloud version for Spring Boot 3.0.0
+    // Use a stable version like 2022.0.4 or later compatible with Spring Boot 3.0.x
+    springCloudVersion = "2022.0.4"
 }
 
 configurations {

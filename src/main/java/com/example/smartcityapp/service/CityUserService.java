@@ -35,17 +35,32 @@ public class CityUserService {
 
     public Optional<CityUser> updateUser(Long id, CityUser updatedUser) {
         return cityUserRepository.findById(id).map(existingUser -> {
+
+            cityUserRepository.findByEmail(updatedUser.getEmail())
+                    .filter(user -> !user.getId().equals(id))
+                    .ifPresent(user -> {
+                        throw new RuntimeException("Email already in use by another user.");
+                    });
+
+            cityUserRepository.findByUserName(updatedUser.getUserName())
+                    .filter(user -> !user.getId().equals(id))
+                    .ifPresent(user -> {
+                        throw new RuntimeException("Username already in use by another user.");
+                    });
+
             existingUser.setUserName(updatedUser.getUserName());
             existingUser.setEmail(updatedUser.getEmail());
+
             if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
                 existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             }
             existingUser.setRoles(updatedUser.getRoles());
+
             return cityUserRepository.save(existingUser);
         });
     }
 
     public void deleteUser(Long id) {
-        cityUserRepository.deleteById(id);
+        cityUserRepository.findById(id).ifPresent(cityUserRepository::delete);
     }
 }

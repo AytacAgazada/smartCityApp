@@ -1,6 +1,5 @@
 package com.example.smartcityapp.model.entity;
 
-import com.example.smartcityapp.model.entity.CityUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +22,7 @@ public class RefreshToken {
 
     private Instant expiryDate;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private CityUser user;
 
