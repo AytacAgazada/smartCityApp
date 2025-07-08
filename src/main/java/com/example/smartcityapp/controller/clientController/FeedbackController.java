@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("/api/feedback/client")
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
