@@ -3,6 +3,7 @@ package com.example.smartcityapp.service;
 import com.example.smartcityapp.model.entity.CityUser;
 import com.example.smartcityapp.repository.CityUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CityUserDetailsService implements UserDetailsService {
@@ -19,13 +21,12 @@ public class CityUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        System.out.println("Loading user by identifier: " + identifier);
+        log.debug("Attempting to load user by identifier: {}", identifier);
+
         var userOptByUserName = cityUserRepository.findByUserName(identifier);
-        var userOptByEmail = cityUserRepository.findByEmail(identifier);
-
-        if(userOptByUserName.isPresent()) {
-            System.out.println("Found by username");
+        if (userOptByUserName.isPresent()) {
             var user = userOptByUserName.get();
+            log.info("User found by username: {}", user.getUserName());
             return new org.springframework.security.core.userdetails.User(
                     user.getUserName(),
                     user.getPassword(),
@@ -33,9 +34,10 @@ public class CityUserDetailsService implements UserDetailsService {
             );
         }
 
-        if(userOptByEmail.isPresent()) {
-            System.out.println("Found by email");
+        var userOptByEmail = cityUserRepository.findByEmail(identifier);
+        if (userOptByEmail.isPresent()) {
             var user = userOptByEmail.get();
+            log.info("User found by email: {}", user.getEmail());
             return new org.springframework.security.core.userdetails.User(
                     user.getUserName(),
                     user.getPassword(),
@@ -43,6 +45,7 @@ public class CityUserDetailsService implements UserDetailsService {
             );
         }
 
+        log.warn("User not found with identifier: {}", identifier);
         throw new UsernameNotFoundException("User not found with identifier: " + identifier);
     }
 
