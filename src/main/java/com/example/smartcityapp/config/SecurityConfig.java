@@ -50,7 +50,7 @@ public class SecurityConfig {
                         "/webjars/**"
                 ).permitAll()
                 .requestMatchers("/users/signUp", "/users/login", "/users/refreshToken").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
